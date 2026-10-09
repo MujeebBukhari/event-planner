@@ -32,6 +32,10 @@ class EventBooking extends Model
         'guest_count',
         'total_amount',
         'payment_method',
+        'payment_status',
+        'stripe_session_id',
+        'stripe_payment_intent_id',
+        'paid_at',
         'message',
         'status',
     ];
@@ -47,6 +51,40 @@ class EventBooking extends Model
             'event_date' => 'date',
             'guest_count' => 'integer',
             'total_amount' => 'decimal:2',
+            'paid_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Determine if the booking has been paid.
+     */
+    public function isPaid(): bool
+    {
+        return $this->payment_status === 'paid';
+    }
+
+    /**
+     * Mark the booking as paid and confirmed.
+     */
+    public function markAsPaid(?string $paymentIntentId = null, ?string $paymentMethod = null): void
+    {
+        $this->update([
+            'payment_status' => 'paid',
+            'status' => 'confirmed',
+            'stripe_payment_intent_id' => $paymentIntentId ?? $this->stripe_payment_intent_id,
+            'payment_method' => $paymentMethod ?? $this->payment_method ?? 'stripe',
+            'paid_at' => now(),
+        ]);
+    }
+
+    /**
+     * Mark the payment as failed.
+     */
+    public function markAsFailed(): void
+    {
+        $this->update([
+            'payment_status' => 'failed',
+            'status' => 'cancelled',
+        ]);
     }
 }

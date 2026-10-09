@@ -14,32 +14,21 @@
 
 <section>
   <div class="wrap">
-    <div class="pillars" style="margin-bottom:70px;">
-      <div class="pillar">
-        <span class="num">01 — Strategy</span>
-        <h3>Business &amp; Market Strategy</h3>
-        <p>Positioning, planning and a clear growth roadmap before a single ad goes live.</p>
-        <ul><li>Market &amp; competitor analysis</li><li>Positioning &amp; messaging</li><li>Growth roadmap</li></ul>
+    @if($services->isNotEmpty())
+      <div class="pillars" style="margin-bottom:70px;">
+        @foreach($services as $service)
+          <div class="pillar">
+            <span class="num">{{ sprintf('%02d', $loop->iteration) }} — {{ $service->icon ?: 'Pillar' }}</span>
+            <h3>{{ $service->title }}</h3>
+            <p>{{ $service->description }}</p>
+          </div>
+        @endforeach
       </div>
-      <div class="pillar">
-        <span class="num">02 — Marketing</span>
-        <h3>Marketing &amp; Brand Growth</h3>
-        <p>Content, ads and brand-building that get a business found and remembered.</p>
-        <ul><li>Content &amp; video production</li><li>Paid ad campaigns</li><li>Brand identity &amp; design</li></ul>
+    @else
+      <div style="text-align:center; padding: 48px 24px; border: 1px dashed var(--surface-line); background: var(--bg-alt); margin-bottom: 70px;">
+        <p style="color: var(--muted); font-size: 15px;">No active services currently listed. Please check back soon.</p>
       </div>
-      <div class="pillar">
-        <span class="num">03 — Events</span>
-        <h3>Events &amp; Experiences</h3>
-        <p>Concept to execution — production, promotion, and the night itself.</p>
-        <ul><li>Event concept &amp; production</li><li>Talent booking</li><li>Ticketing &amp; on-site run</li></ul>
-      </div>
-      <div class="pillar">
-        <span class="num">04 — Revenue</span>
-        <h3>Revenue &amp; Sales Growth</h3>
-        <p>Turning attention into bookings, ticket sales, and repeat business.</p>
-        <ul><li>Sales funnel design</li><li>Ticket &amp; sponsorship revenue</li><li>Retention &amp; repeat business</li></ul>
-      </div>
-    </div>
+    @endif
   </div>
 </section>
 

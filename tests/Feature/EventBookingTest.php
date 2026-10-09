@@ -25,8 +25,9 @@ class EventBookingTest extends TestCase
             'payment_method' => 'card',
         ]);
 
-        $response->assertRedirect(route('tickets'));
-        $response->assertSessionHas('success', 'Your ticket booking has been submitted successfully.');
+        $booking = EventBooking::where('email', 'jordan@email.com')->first();
+        $this->assertNotNull($booking);
+        $response->assertRedirect(route('tickets.success', ['booking_id' => $booking->id]));
 
         $this->assertDatabaseHas('event_bookings', [
             'name' => 'Jordan Smith',
@@ -36,6 +37,7 @@ class EventBookingTest extends TestCase
             'guest_count' => 2,
             'total_amount' => 50.00,
             'payment_method' => 'card',
+            'payment_status' => 'unpaid',
             'status' => 'pending',
         ]);
     }
@@ -55,10 +57,9 @@ class EventBookingTest extends TestCase
             'payment_method' => 'card',
         ]);
 
-        $response->assertRedirect(route('tickets'));
-
         $booking = EventBooking::where('email', 'alice@example.com')->first();
         $this->assertNotNull($booking);
+        $response->assertRedirect(route('tickets.success', ['booking_id' => $booking->id]));
         $this->assertEquals(75.00, $booking->total_amount);
     }
 
@@ -77,10 +78,9 @@ class EventBookingTest extends TestCase
             'payment_method' => 'apple_pay',
         ]);
 
-        $response->assertRedirect(route('tickets'));
-
         $booking = EventBooking::where('email', 'bob@example.com')->first();
         $this->assertNotNull($booking);
+        $response->assertRedirect(route('tickets.success', ['booking_id' => $booking->id]));
         $this->assertEquals(120.00, $booking->total_amount);
         $this->assertEquals('apple_pay', $booking->payment_method);
     }
@@ -224,10 +224,9 @@ class EventBookingTest extends TestCase
             'payment_method' => 'card',
         ], $sensitiveCardData));
 
-        $response->assertRedirect(route('tickets'));
-
         $booking = EventBooking::where('email', 'privacy@example.com')->first();
         $this->assertNotNull($booking);
+        $response->assertRedirect(route('tickets.success', ['booking_id' => $booking->id]));
 
         // Ensure database table columns do not include sensitive card fields
         $columns = Schema::getColumnListing('event_bookings');

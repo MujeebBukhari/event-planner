@@ -19,10 +19,39 @@
       <p>RK Vibes built its name producing live music events — booking talent, selling tickets, and packing rooms. That hands-on experience running real events, real budgets, and real crowds is still the foundation of everything else we do.</p>
       <h3>Where we're going</h3>
       <p>As the business grew, so did what people asked of us: help positioning a company, running its marketing, building a founder's personal brand, not just producing their event. Today RK Vibes operates as a full growth partner — strategy, marketing, events, and revenue, under one roof.</p>
-      <div class="quote-block">
-        <p>"We don't hand off to a different vendor for every piece. The same team that builds your strategy runs your campaign and produces your event."</p>
-        <span>— RK Vibes, Founder</span>
-      </div>
+      @if($testimonials->isNotEmpty())
+        @foreach($testimonials as $testimonial)
+          @php
+            $avatarUrl = null;
+            if ($testimonial->image_path) {
+                if (\Illuminate\Support\Str::startsWith($testimonial->image_path, ['http://', 'https://'])) {
+                    $avatarUrl = $testimonial->image_path;
+                } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($testimonial->image_path) || \Illuminate\Support\Str::startsWith($testimonial->image_path, 'testimonials/')) {
+                    $avatarUrl = \Illuminate\Support\Facades\Storage::url($testimonial->image_path);
+                } elseif (file_exists(public_path($testimonial->image_path))) {
+                    $avatarUrl = asset($testimonial->image_path);
+                }
+            }
+          @endphp
+          <div class="quote-block">
+            <div style="color: var(--gold); font-size: 14px; margin-bottom: 8px; letter-spacing: 2px;">
+              {{ str_repeat('★', max(1, min(5, (int) $testimonial->rating))) }}
+            </div>
+            <p>"{{ $testimonial->message }}"</p>
+            <div style="display: flex; align-items: center; gap: 12px; margin-top: 10px;">
+              @if($avatarUrl)
+                <img src="{{ $avatarUrl }}" alt="{{ $testimonial->client_name }}" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold);">
+              @endif
+              <span>&mdash; {{ $testimonial->client_name }}{{ $testimonial->position ? ', ' . $testimonial->position : '' }}</span>
+            </div>
+          </div>
+        @endforeach
+      @else
+        <div class="quote-block">
+          <p>"We don't hand off to a different vendor for every piece. The same team that builds your strategy runs your campaign and produces your event."</p>
+          <span>&mdash; RK Vibes, Founder</span>
+        </div>
+      @endif
     </div>
     <div class="copy-block">
       <h3>How we work</h3>

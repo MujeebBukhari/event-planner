@@ -6,4 +6,9 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-rk-green: #017b45;
+    --color-rk-green-hover: #029d58;
+    --color-rk-blue: #375fac;
+    --color-rk-blue-hover: #4875cc;
+    --color-rk-cyan: #66cbe6;
 }

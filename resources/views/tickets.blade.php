@@ -15,13 +15,40 @@
 <section style="padding-top:50px;">
   <div class="wrap">
     @if (session('success'))
-      <div style="background: rgba(215, 174, 48, 0.12); border: 1px solid var(--gold); color: var(--gold); padding: 16px 22px; margin-bottom: 30px; font-weight: 600; font-size: 14.5px;">
+      <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid #10b981; color: #34d399; padding: 16px 22px; margin-bottom: 25px; font-weight: 600; font-size: 14.5px; border-radius: 6px;">
         {{ session('success') }}
       </div>
     @endif
 
+    @if (session('error'))
+      <div style="background: rgba(220, 53, 69, 0.15); border: 1px solid #dc3545; color: #ff8080; padding: 16px 22px; margin-bottom: 25px; font-size: 14.5px; border-radius: 6px; display: flex; align-items: flex-start; gap: 12px;">
+        <span style="font-size: 18px; line-height: 1;">&#9888;</span>
+        <div>
+          <strong style="display:block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; color: #ff9999;">Payment Error</strong>
+          <span>{{ session('error') }}</span>
+        </div>
+      </div>
+    @endif
+
+    @if (session('warning'))
+      <div style="background: rgba(55, 95, 172, 0.14); border: 1px solid var(--rk-blue); color: var(--rk-cyan); padding: 16px 22px; margin-bottom: 25px; font-size: 14.5px; border-radius: 6px; display: flex; align-items: flex-start; gap: 12px;">
+        <span style="font-size: 18px; line-height: 1;">&#9432;</span>
+        <div>{{ session('warning') }}</div>
+      </div>
+    @endif
+
+    @if (! config('services.stripe.secret') || config('services.stripe.secret') === 'sk_test_placeholder')
+      <div style="background: rgba(55, 95, 172, 0.10); border: 1px dashed rgba(102, 203, 230, 0.5); color: #9edff0; padding: 14px 20px; margin-bottom: 25px; font-size: 13.5px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 16px; color: var(--rk-cyan);">&#9881;</span>
+          <span><strong>Stripe Setup Notice:</strong> Add your Stripe API keys (<code>STRIPE_KEY</code> &amp; <code>STRIPE_SECRET</code>) in <code>.env</code> to connect directly to Stripe Checkout.</span>
+        </div>
+        <span style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: var(--grad-brand); padding: 4px 10px; border-radius: 4px; color: #fff;">Stripe Test Mode</span>
+      </div>
+    @endif
+
     @if ($errors->any())
-      <div style="background: rgba(220, 53, 69, 0.15); border: 1px solid #dc3545; color: #ff8080; padding: 16px 22px; margin-bottom: 30px; font-size: 14px;">
+      <div style="background: rgba(220, 53, 69, 0.15); border: 1px solid #dc3545; color: #ff8080; padding: 16px 22px; margin-bottom: 25px; font-size: 14px; border-radius: 6px;">
         <strong style="display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">Please correct the following:</strong>
         <ul style="padding-left: 20px; margin: 0;">
           @foreach ($errors->all() as $error)
@@ -78,31 +105,23 @@
             <input type="tel" name="phone" placeholder="(612) 000-0000" value="{{ old('phone') }}">
           </div>
 
-          <h3 style="margin-top:32px;">3. Payment Method</h3>
-          <div class="pay-methods">
-            <button type="button" class="{{ old('payment_method', 'card') === 'card' ? 'active' : '' }}" data-method="card">Card</button>
-            <button type="button" class="{{ old('payment_method') === 'apple_pay' ? 'active' : '' }}" data-method="apple_pay">Apple Pay</button>
-            <button type="button" class="{{ old('payment_method') === 'google_pay' ? 'active' : '' }}" data-method="google_pay">Google Pay</button>
-          </div>
-          <div class="field">
-            <label>Card Number</label>
-            <input type="text" name="card_number" placeholder="4242 4242 4242 4242" autocomplete="off">
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label>Expiry</label>
-              <input type="text" name="card_expiry" placeholder="MM / YY" autocomplete="off">
+          <h3 style="margin-top:32px;">3. Secure Payment</h3>
+          <div style="background: rgba(55, 95, 172, 0.10); border: 1px solid rgba(102, 203, 230, 0.35); border-radius: 8px; padding: 20px; margin-top: 14px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <span style="font-size: 20px;">&#128274;</span>
+              <strong style="color: var(--rk-cyan); font-size: 15px;">Hosted by Stripe Checkout</strong>
             </div>
-            <div class="field">
-              <label>CVC</label>
-              <input type="text" name="card_cvc" placeholder="123" autocomplete="off">
+            <p style="color: rgba(255, 255, 255, 0.85); font-size: 13.5px; line-height: 1.6; margin: 0 0 14px 0;">
+              When you submit your booking, you will be redirected to Stripe's secure, PCI-compliant checkout page to complete your payment.
+            </p>
+            <div style="display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--rk-cyan);">
+              <span>&#10003; Credit &amp; Debit Cards</span>
+              <span>&#10003; Apple Pay</span>
+              <span>&#10003; Google Pay</span>
+              <span>&#10003; 256-bit SSL Encryption</span>
             </div>
           </div>
-          <div class="field">
-            <label>Billing ZIP</label>
-            <input type="text" name="billing_zip" placeholder="55401" autocomplete="off">
-          </div>
-          <div class="card-brands"><span>VISA</span><span>MASTERCARD</span><span>AMEX</span><span>DISCOVER</span></div>
+          <div class="card-brands" style="margin-top: 16px;"><span>VISA</span><span>MASTERCARD</span><span>AMEX</span><span>DISCOVER</span><span>APPLE PAY</span><span>GOOGLE PAY</span></div>
         </div>
 
         <div class="panel" style="position:sticky;top:100px;">
@@ -111,7 +130,7 @@
           <div class="summary-line"><span>VIP Access &times; 0</span><span>$0.00</span></div>
           <div class="summary-line"><span>Processing Fee</span><span>$0.00</span></div>
           <div class="summary-line total"><span>Total</span><b>$50.00</b></div>
-          <button type="submit" class="btn btn-solid" style="width:100%;justify-content:center;margin-top:22px;">Pay $50.00 Securely</button>
+          <button type="submit" class="btn btn-solid" style="width:100%;justify-content:center;margin-top:22px;">Proceed to Stripe Checkout — $50.00</button>
           <div class="lock-note">&#128274; Processed directly via Stripe — your card details never touch our servers</div>
         </div>
 
@@ -122,8 +141,8 @@
 
 <section style="padding-top:0;">
   <div class="wrap">
-    <p style="text-align:center;color:var(--muted);font-size:12.5px;max-width:520px;margin:0 auto;">
-      This is a layout demo — payment fields are illustrative only. The real build wires this form to Stripe Checkout / Payment Element for live card processing.
+    <p style="text-align:center;color:var(--muted);font-size:12.5px;max-width:540px;margin:0 auto;">
+      All ticket transactions are processed securely via Stripe. Sensitive payment details never touch or get stored on our servers.
     </p>
   </div>
 </section>

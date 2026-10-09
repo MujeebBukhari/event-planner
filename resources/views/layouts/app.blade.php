@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>@yield('title', 'RK Vibes — Strategy. Brand. Experience.')</title>
+<link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
 <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
 @stack('styles')
 </head>
 <body>
-<div class="demo-banner">LAYOUT DEMO — placeholder copy &amp; current logo, real branding drops in next pass</div>
 <header>
   <nav>
     <a href="{{ route('home') }}" class="logo-mark"><img src="{{ asset('assets/images/logo.png') }}" alt="RK Vibes logo"></a>

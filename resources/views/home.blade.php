@@ -55,12 +55,21 @@
     </div>
   </div>
   <div class="wrap" style="padding:0 32px;">
-    <div class="pillars">
-      <div class="pillar"><span class="num">01 — Strategy</span><h3>Business &amp; Market Strategy</h3><p>Positioning, planning and a clear growth roadmap before a single ad goes live.</p></div>
-      <div class="pillar"><span class="num">02 — Marketing</span><h3>Marketing &amp; Brand Growth</h3><p>Content, ads and brand-building that get a business found and remembered.</p></div>
-      <div class="pillar"><span class="num">03 — Events</span><h3>Events &amp; Experiences</h3><p>Concept to execution — production, promotion, and the night itself.</p></div>
-      <div class="pillar"><span class="num">04 — Revenue</span><h3>Revenue &amp; Sales Growth</h3><p>Turning attention into bookings, ticket sales, and repeat business.</p></div>
-    </div>
+    @if($services->isNotEmpty())
+      <div class="pillars">
+        @foreach($services as $service)
+          <div class="pillar">
+            <span class="num">{{ sprintf('%02d', $loop->iteration) }} — {{ $service->icon ?: 'Pillar' }}</span>
+            <h3>{{ $service->title }}</h3>
+            <p>{{ $service->description }}</p>
+          </div>
+        @endforeach
+      </div>
+    @else
+      <div style="text-align:center; padding: 40px 20px; border: 1px dashed var(--surface-line); background: var(--bg-alt);">
+        <p style="color: var(--muted); font-size: 14px;">No active services currently listed.</p>
+      </div>
+    @endif
   </div>
 </section>
 
@@ -73,38 +82,96 @@
       <h2>Recent proof, not promises.</h2>
       <p>A look at what we've produced and grown — for our own events and for the people we work with.</p>
     </div>
-    <div class="work-grid">
-      <div class="work-card">
-        <div class="thumb"><b>Live Concert Night<br>ft. Atif Aslam</b></div>
-        <div class="body">
-          <span class="eyebrow">Case Study</span>
-          <h3>RK Vibes Presents — Concert Night</h3>
-          <p>Full production and promotion for a headline concert, with the RK Vibes band sharing the stage with Atif Aslam.</p>
-          <div class="stats"><div><b>1,000+</b><span>Attendees</span></div><div><b>Sold Out</b><span>Ticket Status</span></div></div>
-        </div>
+    @if($galleryItems->isNotEmpty())
+      <div class="work-grid">
+        @foreach($galleryItems->take(3) as $item)
+          @php
+            $itemUrl = null;
+            if ($item->image_path) {
+                if (\Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://'])) {
+                    $itemUrl = $item->image_path;
+                } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($item->image_path) || \Illuminate\Support\Str::startsWith($item->image_path, 'gallery/')) {
+                    $itemUrl = \Illuminate\Support\Facades\Storage::url($item->image_path);
+                } elseif (file_exists(public_path($item->image_path))) {
+                    $itemUrl = asset($item->image_path);
+                }
+            }
+          @endphp
+          <div class="work-card">
+            <div class="thumb" style="position:relative; overflow:hidden;">
+              @if($itemUrl)
+                <img src="{{ $itemUrl }}" alt="{{ $item->title }}" style="width:100%;height:100%;object-fit:cover;">
+              @else
+                <b>{{ $item->title }}</b>
+              @endif
+            </div>
+            <div class="body">
+              <span class="eyebrow">Showcase</span>
+              <h3>{{ $item->title }}</h3>
+              <p>{{ $item->description }}</p>
+            </div>
+          </div>
+        @endforeach
       </div>
-      <div class="work-card">
-        <div class="thumb"><b>Brand Growth</b></div>
-        <div class="body">
-          <span class="eyebrow">Case Study</span>
-          <h3>Local Business Rebrand</h3>
-          <p>Positioning, content system and ad strategy for a growing local business.</p>
-          <div class="stats"><div><b>2.4x</b><span>Reach Growth</span></div><div><b>6wk</b><span>Engagement</span></div></div>
-        </div>
+      <a href="{{ route('work') }}" class="btn btn-ghost" style="margin-top:34px;">View All Work</a>
+    @else
+      <div style="text-align:center; padding: 40px 20px; border: 1px dashed var(--surface-line); background: var(--surface);">
+        <p style="color: var(--muted); font-size: 14px;">No showcase gallery items available at this time.</p>
       </div>
-      <div class="work-card">
-        <div class="thumb"><b>Personal Brand</b></div>
-        <div class="body">
-          <span class="eyebrow">Case Study</span>
-          <h3>Founder Visibility Campaign</h3>
-          <p>Content and positioning strategy to build a founder's public presence.</p>
-          <div class="stats"><div><b>10k+</b><span>New Followers</span></div><div><b>4mo</b><span>Program Length</span></div></div>
-        </div>
-      </div>
-    </div>
-    <a href="{{ route('work') }}" class="btn btn-ghost" style="margin-top:34px;">View All Work</a>
+    @endif
   </div>
 </section>
+
+@if($testimonials->isNotEmpty())
+<div class="perf"></div>
+
+<section id="testimonials">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Client Feedback</span>
+      <h2>What people say.</h2>
+      <p>Stories from the organizers, businesses, and founders we've partnered with.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+      @foreach($testimonials as $testimonial)
+        @php
+          $avatarUrl = null;
+          if ($testimonial->image_path) {
+              if (\Illuminate\Support\Str::startsWith($testimonial->image_path, ['http://', 'https://'])) {
+                  $avatarUrl = $testimonial->image_path;
+              } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($testimonial->image_path) || \Illuminate\Support\Str::startsWith($testimonial->image_path, 'testimonials/')) {
+                  $avatarUrl = \Illuminate\Support\Facades\Storage::url($testimonial->image_path);
+              } elseif (file_exists(public_path($testimonial->image_path))) {
+                  $avatarUrl = asset($testimonial->image_path);
+              }
+          }
+        @endphp
+        <div style="background: var(--surface); border: 1px solid var(--surface-line); padding: 26px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="color: var(--gold); font-size: 14px; margin-bottom: 12px; letter-spacing: 2px;">
+              {{ str_repeat('★', max(1, min(5, (int) $testimonial->rating))) }}
+            </div>
+            <p style="color: var(--ink); font-style: italic; font-size: 14.5px; line-height: 1.55; margin-bottom: 18px;">
+              "{{ $testimonial->message }}"
+            </p>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--surface-line); padding-top: 14px;">
+            @if($avatarUrl)
+              <img src="{{ $avatarUrl }}" alt="{{ $testimonial->client_name }}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold);">
+            @endif
+            <div>
+              <b style="display: block; font-size: 13.5px; color: var(--ink);">{{ $testimonial->client_name }}</b>
+              @if($testimonial->position)
+                <span style="font-size: 11.5px; color: var(--muted);">{{ $testimonial->position }}</span>
+              @endif
+            </div>
+          </div>
+        </div>
+      @endforeach
+    </div>
+  </div>
+</section>
+@endif
 
 <section class="audience">
   <div class="wrap"><div class="section-head"><span class="eyebrow">Who You Are</span><h2>Tell us what you're building.</h2></div></div>

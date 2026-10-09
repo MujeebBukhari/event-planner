@@ -78,8 +78,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 totalEl.textContent = '$' + total.toFixed(2);
             }
 
-            if (payButton && payButton.textContent.indexOf('Pay') !== -1) {
-                payButton.textContent = 'Pay $' + total.toFixed(2) + ' Securely';
+            if (payButton) {
+                payButton.textContent = 'Proceed to Stripe Checkout — $' + total.toFixed(2);
             }
         }
 

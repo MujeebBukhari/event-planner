@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PageRoutesTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Test all converted pages return 200 OK.
      */

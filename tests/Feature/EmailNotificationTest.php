@@ -30,10 +30,11 @@ class EmailNotificationTest extends TestCase
             'payment_method' => 'card',
         ]);
 
-        $response->assertRedirect(route('tickets'));
-        $response->assertSessionHas('success');
+        $booking = EventBooking::where('email', 'michael@dundermifflin.com')->first();
+        $this->assertNotNull($booking);
+        $response->assertRedirect(route('tickets.success', ['booking_id' => $booking->id]));
 
-        Mail::assertSent(EventBookingSubmitted::class, function (EventBookingSubmitted $mail) {
+        Mail::assertQueued(EventBookingSubmitted::class, function (EventBookingSubmitted $mail) {
             return $mail->hasTo(config('mail.admin_email')) &&
                    $mail->booking->name === 'Michael Scott' &&
                    $mail->booking->guest_count === 2;
@@ -77,6 +78,7 @@ class EmailNotificationTest extends TestCase
         $booking = EventBooking::factory()->create([
             'name' => 'Jim Halpert',
             'email' => 'jim@dundermifflin.com',
+            'phone' => '555-0100',
             'payment_method' => 'card',
         ]);
 

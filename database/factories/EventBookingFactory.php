@@ -27,6 +27,33 @@ class EventBookingFactory extends Factory
             'total_amount' => fake()->randomElement([25.00, 50.00, 60.00, 120.00]),
             'message' => fake()->sentence(),
             'status' => 'pending',
+            'payment_status' => 'unpaid',
+            'payment_method' => 'card',
         ];
+    }
+
+    /**
+     * Indicate that the booking is paid.
+     */
+    public function paid(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'payment_status' => 'paid',
+            'status' => 'confirmed',
+            'paid_at' => now(),
+            'stripe_session_id' => 'cs_test_'.fake()->uuid(),
+            'stripe_payment_intent_id' => 'pi_test_'.fake()->uuid(),
+        ]);
+    }
+
+    /**
+     * Indicate that the booking payment failed.
+     */
+    public function paymentFailed(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'payment_status' => 'failed',
+            'status' => 'pending',
+        ]);
     }
 }

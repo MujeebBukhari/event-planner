@@ -15,7 +15,7 @@
 <section style="padding-top:50px;">
   <div class="wrap">
     @if (session('success'))
-      <div style="background: rgba(215, 174, 48, 0.12); border: 1px solid var(--gold); color: var(--gold); padding: 16px 22px; margin-bottom: 30px; font-weight: 600; font-size: 14.5px;">
+      <div style="background: rgba(1, 123, 69, 0.15); border: 1px solid var(--rk-green); color: var(--rk-cyan); padding: 16px 22px; margin-bottom: 30px; font-weight: 600; font-size: 14.5px; border-radius: 4px;">
         {{ session('success') }}
       </div>
     @endif
