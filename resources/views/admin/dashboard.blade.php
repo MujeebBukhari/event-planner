@@ -364,10 +364,89 @@
     </div>
 </div>
 
+<!-- Featured Event & Ticket Pricing Live Controls -->
+<div class="card" style="border: 1px solid rgba(55, 95, 172, 0.35); background: linear-gradient(135deg, rgba(19, 27, 38, 0.95), rgba(15, 23, 42, 0.95)); margin-bottom: 32px;">
+    <div class="card-header">
+        <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                <span class="status-badge" style="background: rgba(102, 203, 230, 0.12); border-color: rgba(102, 203, 230, 0.3); color: var(--accent-cyan);">
+                    <span class="status-dot" style="background-color: var(--accent-cyan); box-shadow: 0 0 8px rgba(102, 203, 230, 0.7);"></span>
+                    Website Hero &amp; Checkout Event
+                </span>
+            </div>
+            <h2 class="card-title" style="font-size: 18px;">Featured Event &amp; Ticket Pricing</h2>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 2px;">
+                Updating this form immediately syncs the event name, date, and ticket prices on both the <strong>Home Page Hero Card</strong> and the <strong>Tickets Checkout Page</strong>.
+            </p>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <a href="{{ route('admin.event.edit') }}" class="btn btn-primary btn-sm">
+                Full Event Editor &rarr;
+            </a>
+            <a href="{{ route('tickets') }}" target="_blank" class="btn btn-secondary btn-sm" title="Open public booking page">
+                View Public Booking
+            </a>
+        </div>
+    </div>
+
+    <form action="{{ route('admin.event.update') }}" method="POST" style="margin-top: 16px;">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="tag" value="{{ $event->tag }}">
+        <input type="hidden" name="doors_time" value="{{ $event->doors_time }}">
+        <input type="hidden" name="general_admission_desc" value="{{ $event->general_admission_desc }}">
+        <input type="hidden" name="vip_access_desc" value="{{ $event->vip_access_desc }}">
+        <input type="hidden" name="cta_text" value="{{ $event->cta_text }}">
+        <input type="hidden" name="note" value="{{ $event->note }}">
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 16px;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="dash_event_title" class="form-label" style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700;">Event Name / Title</label>
+                <input type="text" name="title" id="dash_event_title" class="form-input" style="font-size: 14px; font-weight: 600; padding: 10px 14px;" value="{{ $event->title }}" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="dash_event_meta" class="form-label" style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700;">Location &amp; Date</label>
+                <input type="text" name="date_location" id="dash_event_meta" class="form-input" style="font-size: 14px; font-weight: 600; padding: 10px 14px;" value="{{ $event->date_location }}" required>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 240px)); gap: 16px; margin-bottom: 16px;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="dash_ga_price" class="form-label" style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-cyan); font-weight: 700;">General Admission ($)</label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-weight: 700;">$</span>
+                    <input type="number" step="0.01" min="0" name="general_admission_price" id="dash_ga_price" class="form-input" style="padding-left: 26px; font-weight: 700; color: var(--accent-cyan);" value="{{ $event->general_admission_price }}" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="dash_vip_price" class="form-label" style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #a78bfa; font-weight: 700;">VIP Access ($)</label>
+                <div style="position: relative;">
+                    <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-weight: 700;">$</span>
+                    <input type="number" step="0.01" min="0" name="vip_access_price" id="dash_vip_price" class="form-input" style="padding-left: 26px; font-weight: 700; color: #a78bfa;" value="{{ $event->vip_access_price }}" required>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-subtle); padding-top: 14px; flex-wrap: wrap; gap: 10px;">
+            <div style="font-size: 12px; color: var(--text-muted);">
+                Currently live: <strong style="color: var(--text-primary);">{{ $event->title }}</strong> &bull; GA: <span style="color: var(--accent-cyan); font-weight: 700;">{{ $event->ga_price_display }}</span> &bull; VIP: <span style="color: #a78bfa; font-weight: 700;">{{ $event->vip_price_display }}</span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">
+                Save &amp; Update Live Site
+            </button>
+        </div>
+    </form>
+</div>
+
 <!-- Quick Actions Section -->
 <div class="quick-actions-section" style="margin-bottom: 32px;">
     <h3 style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.05em;">Quick Actions</h3>
     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="{{ route('admin.event.edit') }}" class="btn btn-primary btn-sm">
+            &#9881; Featured Event &amp; Prices
+        </a>
         <a href="{{ route('admin.services.create') }}" class="btn btn-primary btn-sm">
             + Add Service
         </a>

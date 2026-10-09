@@ -153,6 +153,32 @@
             cursor: pointer;
         }
 
+        .forgot-link {
+            font-size: 13px;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            transition: color 0.15s ease;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .alert-status {
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background-color: rgba(1, 123, 69, 0.15);
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-cyan);
+            font-size: 13.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .btn-submit {
             width: 100%;
             padding: 12px 16px;
@@ -204,6 +230,13 @@
             <h1>Administrator Access</h1>
             <p>Sign in to access the RK Vibes management portal</p>
         </div>
+
+        @if (session('status'))
+            <div class="alert-status">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>{{ session('status') }}</span>
+            </div>
+        @endif
 
         @if($errors->any() && ! $errors->has('email') && ! $errors->has('password'))
             <div style="margin-bottom: 20px; padding: 12px 16px; border-radius: 8px; background-color: rgba(244, 63, 94, 0.12); border: 1px solid rgba(244, 63, 94, 0.3); color: #fb7185; font-size: 13px;">
@@ -267,6 +300,7 @@
                     <input type="checkbox" name="remember" class="remember-checkbox" {{ old('remember') ? 'checked' : '' }}>
                     <span>Keep me signed in</span>
                 </label>
+                <a href="{{ route('password.request') }}" class="forgot-link">Forgot password?</a>
             </div>
 
             <button type="submit" class="btn-submit">

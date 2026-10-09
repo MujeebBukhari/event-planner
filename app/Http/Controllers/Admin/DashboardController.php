@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ContactMessage;
 use App\Models\EventBooking;
+use App\Models\EventSetting;
 use App\Models\GalleryItem;
 use App\Models\Service;
 use App\Models\Testimonial;
@@ -29,7 +30,8 @@ class DashboardController extends Controller
 
         $recentBookings = EventBooking::latest()->take(5)->get();
         $recentMessages = ContactMessage::latest()->take(5)->get();
+        $event = EventSetting::current();
 
-        return view('admin.dashboard', compact('stats', 'recentBookings', 'recentMessages'));
+        return view('admin.dashboard', compact('stats', 'recentBookings', 'recentMessages', 'event'));
     }
 }

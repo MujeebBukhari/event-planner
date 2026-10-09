@@ -21,13 +21,13 @@
     </div>
 
     <div class="hero-card">
-      <span class="tag">Upcoming Event</span>
-      <h3>RK Vibes Presents —<br>Fall Gathering 2026</h3>
-      <p class="meta">Minneapolis, MN &nbsp;·&nbsp; <strong>Oct 2026</strong></p>
-      <div class="ticket-row"><span class="name">General Admission</span><span class="price">$25</span></div>
-      <div class="ticket-row"><span class="name">VIP Access</span><span class="price">$60</span></div>
-      <a href="{{ route('tickets') }}" class="btn btn-solid">Book Now — Secure Checkout</a>
-      <div class="secure-note">Paid direct via Stripe — no third-party ticketing fees</div>
+      <span class="tag">{{ $event->tag }}</span>
+      <h3>{!! nl2br(e(str_replace([' — ', ' - '], " —\n", $event->title))) !!}</h3>
+      <p class="meta">{{ $event->date_location }}</p>
+      <div class="ticket-row"><span class="name">General Admission</span><span class="price">{{ $event->ga_price_display }}</span></div>
+      <div class="ticket-row"><span class="name">VIP Access</span><span class="price">{{ $event->vip_price_display }}</span></div>
+      <a href="{{ route('tickets') }}" class="btn btn-solid">{{ $event->cta_text ?: 'Book Now — Secure Checkout' }}</a>
+      <div class="secure-note">{{ $event->note ?: 'Paid direct via Stripe — no third-party ticketing fees' }}</div>
     </div>
   </div>
 </section>

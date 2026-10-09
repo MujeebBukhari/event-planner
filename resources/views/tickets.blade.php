@@ -1,14 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'Book Tickets — Fall Gathering 2026 — RK Vibes')
+@php
+  $gaPrice = (float) $event->general_admission_price;
+  $vipPrice = (float) $event->vip_access_price;
+  $initGaQty = old('event_type') === 'VIP Access' ? 0 : (old('event_type') ? (int) old('guest_count', 2) : 2);
+  $initVipQty = old('event_type') === 'VIP Access' ? (int) old('guest_count', 0) : 0;
+  $initTotal = ($initGaQty * $gaPrice) + ($initVipQty * $vipPrice);
+@endphp
+
+@section('title', 'Book Tickets — ' . $event->title . ' — RK Vibes')
 
 @section('content')
 <section class="page-hero" style="padding-bottom:40px;">
   <div class="wrap">
     <div class="breadcrumb"><a href="{{ route('home') }}">Home</a> / Events / Book Tickets</div>
-    <span class="eyebrow">Upcoming Event</span>
-    <h1>RK Vibes Presents — Fall Gathering 2026</h1>
-    <p class="lead">Minneapolis, MN &nbsp;·&nbsp; October 2026 &nbsp;·&nbsp; Doors 6:00 PM</p>
+    <span class="eyebrow">{{ $event->tag }}</span>
+    <h1>{{ $event->title }}</h1>
+    <p class="lead">{{ $event->date_location }} &nbsp;·&nbsp; {{ $event->doors_time }}</p>
   </div>
 </section>
 
@@ -71,21 +79,21 @@
           <div class="tier-row">
             <div>
               <div class="tier-name">General Admission</div>
-              <div class="tier-desc">Standing room, full event access</div>
+              <div class="tier-desc">{{ $event->general_admission_desc }}</div>
             </div>
             <div>
-              <div class="tier-price">$25</div>
-              <div class="qty-control"><button type="button" aria-label="Decrease">&minus;</button><span>{{ old('event_type') === 'General Admission' ? old('guest_count', 2) : (old('event_type') ? 0 : 2) }}</span><button type="button" aria-label="Increase">&plus;</button></div>
+              <div class="tier-price">{{ $event->ga_price_display }}</div>
+              <div class="qty-control"><button type="button" aria-label="Decrease">&minus;</button><span>{{ $initGaQty }}</span><button type="button" aria-label="Increase">&plus;</button></div>
             </div>
           </div>
           <div class="tier-row">
             <div>
               <div class="tier-name">VIP Access</div>
-              <div class="tier-desc">Front section, early entry, meet &amp; greet</div>
+              <div class="tier-desc">{{ $event->vip_access_desc }}</div>
             </div>
             <div>
-              <div class="tier-price">$60</div>
-              <div class="qty-control"><button type="button" aria-label="Decrease">&minus;</button><span>{{ old('event_type') === 'VIP Access' ? old('guest_count', 0) : 0 }}</span><button type="button" aria-label="Increase">&plus;</button></div>
+              <div class="tier-price">{{ $event->vip_price_display }}</div>
+              <div class="qty-control"><button type="button" aria-label="Decrease">&minus;</button><span>{{ $initVipQty }}</span><button type="button" aria-label="Increase">&plus;</button></div>
             </div>
           </div>
 
@@ -126,11 +134,11 @@
 
         <div class="panel" style="position:sticky;top:100px;">
           <h3>Order Summary</h3>
-          <div class="summary-line"><span>General Admission &times; 2</span><span>$50.00</span></div>
-          <div class="summary-line"><span>VIP Access &times; 0</span><span>$0.00</span></div>
+          <div class="summary-line"><span>General Admission &times; {{ $initGaQty }}</span><span>${{ number_format($initGaQty * $gaPrice, 2) }}</span></div>
+          <div class="summary-line"><span>VIP Access &times; {{ $initVipQty }}</span><span>${{ number_format($initVipQty * $vipPrice, 2) }}</span></div>
           <div class="summary-line"><span>Processing Fee</span><span>$0.00</span></div>
-          <div class="summary-line total"><span>Total</span><b>$50.00</b></div>
-          <button type="submit" class="btn btn-solid" style="width:100%;justify-content:center;margin-top:22px;">Proceed to Stripe Checkout — $50.00</button>
+          <div class="summary-line total"><span>Total</span><b>${{ number_format($initTotal, 2) }}</b></div>
+          <button type="submit" class="btn btn-solid" style="width:100%;justify-content:center;margin-top:22px;">Proceed to Stripe Checkout — ${{ number_format($initTotal, 2) }}</button>
           <div class="lock-note">&#128274; Processed directly via Stripe — your card details never touch our servers</div>
         </div>
 

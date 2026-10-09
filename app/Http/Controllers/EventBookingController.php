@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreEventBookingRequest;
 use App\Mail\EventBookingSubmitted;
 use App\Models\EventBooking;
+use App\Models\EventSetting;
 use App\Services\StripeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,6 +27,16 @@ class EventBookingController extends Controller
     ];
 
     /**
+     * Get currently active ticket prices.
+     *
+     * @return array<string, float>
+     */
+    public static function getTicketPrices(): array
+    {
+        return EventSetting::current()->ticketPrices();
+    }
+
+    /**
      * Store a newly created event booking and redirect to Stripe Checkout.
      */
     public function store(StoreEventBookingRequest $request, StripeService $stripeService): RedirectResponse
@@ -34,7 +45,8 @@ class EventBookingController extends Controller
 
         $ticketType = $validated['event_type'];
         $guestCount = (int) $validated['guest_count'];
-        $unitPrice = self::TICKET_PRICES[$ticketType] ?? 0.00;
+        $prices = self::getTicketPrices();
+        $unitPrice = $prices[$ticketType] ?? (self::TICKET_PRICES[$ticketType] ?? 0.00);
         $totalAmount = $unitPrice * $guestCount;
 
         $booking = EventBooking::create([

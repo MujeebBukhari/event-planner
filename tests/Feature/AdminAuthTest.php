@@ -6,6 +6,8 @@ use App\Models\ContactMessage;
 use App\Models\EventBooking;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Tests\TestCase;
 
 class AdminAuthTest extends TestCase
@@ -196,5 +198,102 @@ class AdminAuthTest extends TestCase
         $response->assertSee('Total Services');
         $response->assertSee('Total Gallery Items');
         $response->assertSee('Total Testimonials');
+    }
+
+    /**
+     * 9. Public pages display the small login button for guests.
+     */
+    public function test_public_pages_display_login_button_for_guests(): void
+    {
+        $response = $this->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee(route('login'));
+        $response->assertSee('Login');
+        $response->assertSee('nav-login');
+    }
+
+    /**
+     * 9b. Public pages display dashboard button for authenticated users.
+     */
+    public function test_public_pages_display_dashboard_button_for_authenticated_users(): void
+    {
+        $admin = User::factory()->admin()->create();
+
+        $response = $this->actingAs($admin)->get(route('home'));
+
+        $response->assertOk();
+        $response->assertSee(route('admin.dashboard'));
+        $response->assertSee('Dashboard');
+    }
+
+    /**
+     * 10. Login page displays forgot password link.
+     */
+    public function test_login_page_displays_forgot_password_link(): void
+    {
+        $response = $this->get(route('admin.login'));
+
+        $response->assertOk();
+        $response->assertSee(route('password.request'));
+        $response->assertSee('Forgot password?');
+    }
+
+    /**
+     * 11. Forgot password page is accessible.
+     */
+    public function test_forgot_password_page_is_accessible(): void
+    {
+        $response = $this->get(route('password.request'));
+
+        $response->assertOk();
+        $response->assertSee('Forgot Password');
+        $response->assertSee('Send Password Reset Link');
+    }
+
+    /**
+     * 12. Reset password link can be requested.
+     */
+    public function test_reset_password_link_can_be_requested(): void
+    {
+        User::factory()->admin()->create([
+            'email' => 'admin@example.com',
+        ]);
+
+        $response = $this->post(route('password.email'), [
+            'email' => 'admin@example.com',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('status');
+    }
+
+    /**
+     * 13. Password can be reset with valid token.
+     */
+    public function test_password_can_be_reset_with_valid_token(): void
+    {
+        $user = User::factory()->admin()->create([
+            'email' => 'admin@example.com',
+            'password' => Hash::make('old-password-123'),
+        ]);
+
+        $token = Password::createToken($user);
+
+        $resetPageResponse = $this->get(route('password.reset', ['token' => $token, 'email' => 'admin@example.com']));
+        $resetPageResponse->assertOk();
+        $resetPageResponse->assertSee('Reset Password');
+
+        $updateResponse = $this->post(route('password.update'), [
+            'token' => $token,
+            'email' => 'admin@example.com',
+            'password' => 'new-secret-password-123',
+            'password_confirmation' => 'new-secret-password-123',
+        ]);
+
+        $updateResponse->assertRedirect(route('admin.login'));
+        $updateResponse->assertSessionHas('status');
+
+        $this->assertTrue(Hash::check('new-secret-password-123', $user->fresh()->password));
     }
 }
