@@ -201,16 +201,15 @@ class AdminAuthTest extends TestCase
     }
 
     /**
-     * 9. Public pages display the small login button for guests.
+     * 9. Public pages do not display the login button in navigation for guests.
      */
-    public function test_public_pages_display_login_button_for_guests(): void
+    public function test_public_pages_do_not_display_login_button_in_nav_for_guests(): void
     {
         $response = $this->get(route('home'));
 
         $response->assertOk();
+        $response->assertDontSee('nav-login');
         $response->assertSee(route('login'));
-        $response->assertSee('Login');
-        $response->assertSee('nav-login');
     }
 
     /**

@@ -118,7 +118,7 @@ section{padding:90px 0;}
   background:
     radial-gradient(ellipse 750px 420px at 85% -10%, rgba(55,95,172,0.22), rgba(1,123,69,0.14) 40%, transparent 70%),
     radial-gradient(circle 350px at 15% 90%, rgba(102,203,230,0.08), transparent 60%);}
-.hero-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:60px;align-items:end;}
+.hero-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:60px;align-items:start;}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr;}}
 .hero h1{font-size:clamp(40px,6vw,74px);margin:18px 0 24px;}
 .hero h1 span{
